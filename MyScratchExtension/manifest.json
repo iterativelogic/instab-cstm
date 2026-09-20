@@ -1,0 +1,31 @@
+{
+    "manifest_version": 3,
+    "name": "RDK Instagram",
+    "description": "Base Level Extension",
+    "version": "1.0",
+    "action": {
+      "default_icon": "instagram-color-icon.png"
+    },
+    "permissions": [ "tabs"],
+    "content_scripts":[
+        {
+            "js": [
+              "./scripts/content.js",
+              "./scripts/image-content.js",
+              "./scripts/experiments.js"
+            ],
+            "css": ["./css/extn.css"],
+            "matches": [
+              "*://*.instagram.com/p/*",
+              "*://*.instagram.com/reel/*",
+              "*://*.instagram.com/*",
+              "*://*.instagram.com/*/*",
+              "*://*.instagram.com/*/*/*"
+              ],
+            "permissions": [
+              "webRequest","debugger", "tabs",
+              "*://*.instagram.com/graphql"
+            ]
+        }
+    ]
+  }

@@ -8,6 +8,17 @@ const createOpenBtn = (source) => {
   return openBtn;
 };
 
+const getFilename = (url, username) => {
+  const addUsername =true ;
+  if (!addUsername) return false;
+
+  const urlObject = new URL(url);
+  const originalFilename = urlObject.pathname.split('/').pop();
+  const dpath = `${username}$_${originalFilename}`;
+  console.info(dpath)
+  return dpath;
+};
+
 const createSaveBtn = (source, username) => {
   const saveBtn = document.createElement('a');
   saveBtn.className = 'instab-btn instab-save';
@@ -15,6 +26,7 @@ const createSaveBtn = (source, username) => {
 
   saveBtn.addEventListener('click', (e) => {
     e.preventDefault();
+    const fname = getFilename(source, username);
     browser.runtime.sendMessage({ url: source, username });
   });
 
@@ -51,11 +63,6 @@ const addButtons = (media) => {
   for (let i = 0; i < media.length; i++) {
     let source = isBlob(media[i].src) ? null : media[i].src;
 
-    if (isStory()) {
-      const srcset = media[i].srcset;
-      source = srcset ? srcset.split(',')[0] : media[i].getElementsByTagName('source')[0].src; //For videos on stories
-    }
-
     const mediaContainer = media[i].parentNode.parentNode;
 
     if (source && !mediaContainer.classList.contains('instab-container')) {
@@ -80,11 +87,36 @@ const addButtons = (media) => {
       if (newTabBtn)
         mediaContainer.removeChild(newTabBtn);
     } else if (!source && isVideo(media[i]) && !mediaContainer.querySelector('.instab-new-tab')) {
-      const newTabBtn = createNewTabBtn(mediaContainer);
-      mediaContainer.appendChild(newTabBtn);
+      //const newTabBtn = createNewTabBtn(mediaContainer);
+      const vmedia = media[i]
+      let l = null;
+      let blob = fetch(vmedia.src).then(r => 
+        {
+          const str = r.body;
+          const reader = str.getReader();
+          reader.read().then(function processText({ done, value }) {
+            const utf8Decoder = new TextDecoder("utf-8");
+            const vm = utf8Decoder.decode(value)
+            console.info(vm);
+          });
+          debugger;
+
+          
+        });
+
+
+
+      
+      vmedia.setAttribute("controls", "");
+      //const saveBtn = createSaveBtn(source, username);
+      //mediaContainer.appendChild(saveBtn);
     }
   }
 };
+
+const calP = (blob) => {
+  console.info("Pranav");
+}
 
 const isLargerThan350 = (img) => {
   const { width } = isStory() ? img.getBoundingClientRect() : img;
@@ -116,9 +148,7 @@ const handleClick = () => {
     tries++;
 
     if (isStory()) {
-      addInstab();
-      instabObserver.observe(document.body, { subtree: true, childList: true });
-      clearInterval(interval);
+      
     } else {
       instabId = new Date().getTime();
 

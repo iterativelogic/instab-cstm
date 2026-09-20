@@ -26,7 +26,9 @@ const getFilename = (url, username) => {
 
   const urlObject = new URL(url);
   const originalFilename = urlObject.pathname.split('/').pop();
-  return `${username}${separator}${originalFilename}`;
+  const dpath = `${username}${separator}${originalFilename}`;
+  console.info(dpath)
+  return dpath;
 };
 
 const downloadMedia = ({ url, username }) => {
